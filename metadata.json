@@ -1,0 +1,6 @@
+{
+  "name": "Nigerian Gaming Top-Up Platform",
+  "description": "Mobile-first e-commerce storefront for Nigerian gamers to purchase Free Fire Diamonds and Call of Duty: Mobile CP with instant automated fulfillment.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

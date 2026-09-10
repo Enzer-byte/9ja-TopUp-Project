@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function () {
+        try {
+          var originalFetch = typeof window !== 'undefined' && window.fetch ? window.fetch.bind(window) : undefined;
+          var currentFetch = originalFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function () {
+              return currentFetch;
+            },
+            set: function (newFetch) {
+              currentFetch = newFetch;
+            },
+            configurable: true,
+            enumerable: true,
+          });
+        } catch (e) {
+          console.warn('Window fetch setter fallback:', e);
+        }
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nigerian Gaming Top-Up Platform</title>
+    <meta name="description" content="Mobile-first e-commerce storefront for Nigerian gamers to purchase Free Fire Diamonds and Call of Duty: Mobile CP with instant automated fulfillment." />
+    <meta property="og:title" content="Nigerian Gaming Top-Up Platform" />
+    <meta property="og:description" content="Mobile-first e-commerce storefront for Nigerian gamers to purchase Free Fire Diamonds and Call of Duty: Mobile CP with instant automated fulfillment." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
