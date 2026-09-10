@@ -19,6 +19,7 @@ import {
 import { Order, ProductPackage, TransactionLog, SystemSettings, SupplierType } from '../types';
 import { storage } from '../services/storage';
 import { OrderService } from '../services/orderService';
+import { AdminSkeleton } from './AdminSkeleton';
 
 interface AdminDashboardProps {
   packages: ProductPackage[];
@@ -43,6 +44,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [retryingOrderId, setRetryingOrderId] = useState<string | null>(null);
   const [orderSearchQuery, setOrderSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'success' | 'failed' | 'processing'>('all');
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
+
+  // Trigger brief skeleton transition effect when sub-route changes
+  useEffect(() => {
+    setIsTransitioning(true);
+    const timer = setTimeout(() => {
+      setIsTransitioning(false);
+    }, 280);
+    return () => clearTimeout(timer);
+  }, [activeAdminSubRoute]);
 
   // Map route to activeTab
   const currentTab = (() => {
@@ -87,6 +99,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const refreshData = () => {
     setOrders(storage.getOrders());
     setTransactions(storage.getTransactions());
+  };
+
+  const handleManualRefresh = () => {
+    setIsManualRefreshing(true);
+    refreshData();
+    setTimeout(() => {
+      setIsManualRefreshing(false);
+    }, 450);
   };
 
   useEffect(() => {
@@ -154,28 +174,51 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   return (
     <div className="space-y-6 pb-12 text-slate-100 max-w-5xl mx-auto">
       {/* Admin Title & Bar */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
+      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="flex items-center justify-between sm:justify-start space-x-3">
           <div className="flex items-center space-x-2.5">
             <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30">
               <Sliders className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-black text-lg text-white">Merchant Admin & Operations</h2>
+              <div className="flex items-center space-x-2">
+                <h2 className="font-black text-lg text-white">Merchant Admin & Operations</h2>
+                {isTransitioning ? (
+                  <span className="hidden sm:inline-flex items-center space-x-1 text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-full">
+                    <RefreshCw className="w-2.5 h-2.5 animate-spin" />
+                    <span>Loading View...</span>
+                  </span>
+                ) : (
+                  <span className="hidden sm:inline-flex items-center space-x-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Live Synced</span>
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-slate-400">Order fulfillment, GMV analytics, supplier adapters, and catalog control</p>
             </div>
           </div>
+
+          <button
+            onClick={handleManualRefresh}
+            disabled={isManualRefreshing || isTransitioning}
+            className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white border border-slate-700 transition flex items-center space-x-1.5 text-xs font-semibold shrink-0"
+            title="Sync live data from storage"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-emerald-400 ${isManualRefreshing ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">{isManualRefreshing ? 'Syncing...' : 'Sync Data'}</span>
+          </button>
         </div>
 
         {/* Sub-nav tabs */}
         <div className="flex flex-wrap items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700 text-xs gap-1">
           <button
             onClick={() => setTab('analytics')}
-            className={`px-3 py-1.5 rounded-lg font-bold transition ${
+            className={`px-3 py-1.5 rounded-lg font-bold transition flex items-center space-x-1 ${
               currentTab === 'analytics' ? 'bg-emerald-500 text-slate-950 shadow-sm' : 'text-slate-300 hover:text-white'
             }`}
           >
-            Overview
+            <span>Overview</span>
           </button>
           <button
             onClick={() => setTab('orders')}
@@ -212,8 +255,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       </div>
 
-      {/* Overview Analytics Tab */}
-      {currentTab === 'analytics' && (
+      {/* Sub-route Content with Skeleton Transition */}
+      {isTransitioning ? (
+        <AdminSkeleton tab={currentTab} />
+      ) : (
+        <div className="animate-in fade-in duration-200">
+          {/* Overview Analytics Tab */}
+          {currentTab === 'analytics' && (
         <div className="space-y-6">
           {/* Key Metric Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
@@ -683,6 +731,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               ))
             )}
           </div>
+        </div>
+      )}
         </div>
       )}
     </div>
