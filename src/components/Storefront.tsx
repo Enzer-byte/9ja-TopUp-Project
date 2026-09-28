@@ -113,12 +113,12 @@ export const Storefront: React.FC<StorefrontProps> = ({
   };
 
   return (
-    <div className="pb-28 text-slate-100 sm:pb-12">
-      <section className="relative overflow-hidden rounded-[2rem] border border-slate-800 bg-slate-900 px-5 py-6 shadow-2xl shadow-slate-950/30 sm:px-8 sm:py-9">
-        <div className="absolute inset-y-0 right-0 w-2/3 bg-[radial-gradient(circle_at_75%_30%,rgba(16,185,129,0.17),transparent_52%)]" />
-        <div className="relative max-w-2xl">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-300">
-            <Zap className="h-3.5 w-3.5 fill-current" /> Instant game top-up
+    <div className="space-y-6 pb-12 text-slate-100">
+      {/* Top Banner Notice */}
+      <div className="ds-card bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-900 border-emerald-500/20 rounded-2xl p-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+            <Zap className="w-5 h-5" />
           </div>
           <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Top up. Get back in the game.</h1>
           <p className="mt-2 max-w-lg text-sm leading-6 text-slate-400">Secure, direct credits for your favourite mobile games — delivered to the player ID you provide.</p>
@@ -127,14 +127,21 @@ export const Storefront: React.FC<StorefrontProps> = ({
             <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-400" /> Usually under 60 seconds</span>
           </div>
         </div>
-      </section>
 
-      <div className="mt-7 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
-        <div className="space-y-7">
-          <section aria-labelledby="game-heading">
-            <div className="mb-3 flex items-end justify-between">
-              <div><p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-400">Step 1</p><h2 id="game-heading" className="mt-1 text-xl font-bold text-white">Choose your game</h2></div>
-              <span className="text-xs text-slate-500">2 games available</span>
+        <div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={playerId}
+                onChange={(e) => {
+                  setPlayerId(e.target.value);
+                  setVerifiedNickname(null);
+                  setVerificationError(null);
+                }}
+                placeholder={currentGame.playerIdPlaceholder}
+                className="ds-input w-full px-4 py-3 text-sm font-mono transition"
+              />
             </div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {GAMES.map((game) => {
@@ -179,14 +186,123 @@ export const Storefront: React.FC<StorefrontProps> = ({
           </form>
         </div>
 
-        <aside className="lg:sticky lg:top-24">
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-xl shadow-slate-950/20">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-400">Your order</p>
-            {selectedPkg ? <><div className="mt-4 flex gap-3 border-b border-slate-800 pb-4"><div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-400/10 text-sm font-black text-emerald-400">{currentGame.name.slice(0, 2).toUpperCase()}</div><div><p className="text-sm font-bold text-white">{currentGame.name}</p><p className="mt-0.5 text-xs text-slate-400">{selectedPkg.amount.toLocaleString()} {currentGame.currencyName}{selectedPkg.bonus ? ` + ${selectedPkg.bonus} bonus` : ''}</p></div></div><div className="space-y-3 py-4 text-xs"><div className="flex justify-between text-slate-400"><span>Player ID</span><span className="max-w-40 truncate font-mono text-slate-200">{playerId || 'Add your ID'}</span></div><div className="flex justify-between text-slate-400"><span>Delivery</span><span className="font-semibold text-emerald-400">Instant</span></div></div><div className="flex items-end justify-between border-t border-slate-800 pt-4"><span className="text-sm font-bold text-slate-300">Total</span><span className="text-2xl font-black text-white">{naira(selectedPkg.salePriceNgn)}</span></div></> : <p className="mt-4 text-sm text-slate-400">Choose a package to see your total.</p>}
-          </div>
-          <div className="mt-3 rounded-2xl border border-slate-800 bg-slate-900/70 p-4"><div className="flex gap-2.5"><Headphones className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" /><div><p className="text-xs font-bold text-white">Need help before paying?</p><p className="mt-1 text-[11px] leading-4 text-slate-400">Our support team can help you locate your player ID or track an order.</p></div></div><div className="mt-3 flex items-center gap-3 text-[11px] font-bold text-slate-300"><span className="flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> Secure payment</span><span className="flex items-center gap-1"><Sparkles className="h-3.5 w-3.5 text-emerald-400" /> Fast delivery</span></div></div>
-        </aside>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {activePackages.map((pkg) => {
+            const isSelected = selectedPackageId === pkg.id;
+            return (
+              <button
+                key={pkg.id}
+                type="button"
+                onClick={() => setSelectedPackageId(pkg.id)}
+                className={`relative p-3.5 sm:p-4 rounded-2xl border text-left transition-all flex flex-col justify-between ${
+                  isSelected
+                    ? 'bg-slate-800 border-emerald-500 ring-2 ring-emerald-500/30 shadow-md'
+                    : 'bg-slate-850/70 border-slate-800 hover:border-slate-700 hover:bg-slate-800/40'
+                }`}
+              >
+                {pkg.badge && (
+                  <span className="absolute -top-2.5 right-3 bg-emerald-500 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                    {pkg.badge}
+                  </span>
+                )}
+
+                <div>
+                  <span className="font-extrabold text-sm sm:text-base text-white block">
+                    {pkg.name}
+                  </span>
+                  {pkg.bonus ? (
+                    <span className="text-[11px] text-emerald-400 font-semibold flex items-center space-x-1 mt-0.5">
+                      <Sparkles className="w-3 h-3" />
+                      <span>+{pkg.bonus} Extra Bonus</span>
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-slate-400 mt-0.5 block">Standard Pack</span>
+                  )}
+                </div>
+
+                <div className="mt-4 pt-2 border-t border-slate-800/80 flex items-baseline justify-between">
+                  <span className="text-xs text-slate-400">Price</span>
+                  <span className="font-black text-sm sm:text-base text-emerald-400">
+                    ₦{pkg.salePriceNgn.toLocaleString()}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
+
+      {/* Step 4: Customer Details & Checkout */}
+      <form onSubmit={handleProceedToCheckout} className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
+        <div className="flex items-center space-x-2">
+          <span className="w-6 h-6 rounded-full bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center">
+            4
+          </span>
+          <h3 className="font-bold text-base text-white">Receipt & Checkout</h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-semibold text-slate-300 block mb-1">
+              Email Address <span className="text-emerald-400">*</span>
+            </label>
+            <input
+              type="email"
+              required
+              value={customerEmail}
+              onChange={(e) => setCustomerEmail(e.target.value)}
+              placeholder="e.g. gamer@gmail.com"
+              className="ds-input w-full px-4 py-2.5 text-sm"
+            />
+            <span className="text-[10px] text-slate-400 mt-1 block">Order receipt and reference code will be emailed here.</span>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-slate-300 block mb-1">
+              WhatsApp / Phone <span className="text-slate-500">(Optional)</span>
+            </label>
+            <input
+              type="tel"
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              placeholder="e.g. 08012345678"
+              className="ds-input w-full px-4 py-2.5 text-sm"
+            />
+            <span className="text-[10px] text-slate-400 mt-1 block">For priority support via WhatsApp.</span>
+          </div>
+        </div>
+
+        {/* Order Summary Breakdown */}
+        {selectedPkg && (
+          <div className="mt-4 bg-slate-800/70 rounded-2xl p-4 border border-slate-700/60 space-y-2 text-xs">
+            <div className="flex justify-between text-slate-400">
+              <span>Game & Item</span>
+              <span className="font-semibold text-white">{currentGame.name} — {selectedPkg.name}</span>
+            </div>
+            <div className="flex justify-between text-slate-400">
+              <span>Target Account</span>
+              <span className="font-mono text-emerald-400 font-semibold">{playerId || 'Not entered yet'}</span>
+            </div>
+            <div className="flex justify-between text-slate-400">
+              <span>Payment Gateway</span>
+              <span className="text-slate-300">Paystack / Flutterwave</span>
+            </div>
+            <div className="pt-2 border-t border-slate-700/60 flex justify-between items-baseline">
+              <span className="text-sm font-bold text-slate-200">Total Due (NGN)</span>
+              <span className="font-black text-xl text-emerald-400">₦{selectedPkg.salePriceNgn.toLocaleString()}</span>
+            </div>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          className="ds-button-primary w-full py-3.5 text-base flex items-center justify-center space-x-2 transition cursor-pointer"
+        >
+          <Lock className="w-4 h-4" />
+          <span>Pay with Paystack / Flutterwave</span>
+          <ArrowRight className="w-5 h-5" />
+        </button>
+      </form>
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-700 bg-slate-950/95 p-3 backdrop-blur sm:hidden"><button type="submit" form="checkout-form" className="flex w-full items-center justify-between rounded-xl bg-emerald-400 px-4 py-3.5 text-slate-950"><span className="text-left"><span className="block text-[10px] font-bold uppercase tracking-wider opacity-70">Total</span><span className="text-lg font-black">{selectedPkg ? naira(selectedPkg.salePriceNgn) : 'Choose a pack'}</span></span><span className="flex items-center gap-1 text-sm font-black">Continue <ChevronRight className="h-5 w-5" /></span></button></div>
 

@@ -182,9 +182,9 @@ export default function App() {
       {!isAdminRoute && <WhatsAppFloatingButton settings={settings} />}
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500 mt-8">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>© {new Date().getFullYear()} Nigerian Gaming Top-Up Platform. Legitimate B2B publisher supply.</p>
+      <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500 mt-12">
+        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p>© {new Date().getFullYear()} RelayTop NG. Gaming credit, relayed fast.</p>
           <div className="flex items-center space-x-3 text-[11px]">
             <span>Free Fire</span>
             <span>•</span>

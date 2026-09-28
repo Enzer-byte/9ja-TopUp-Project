@@ -1,1 +1,106 @@
 @import "tailwindcss";
+
+/*
+ * RelayTop NG foundation. Keep semantic tokens here rather than introducing
+ * one-off hex values in screens; see docs/frontend-design-system.md.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Colour */
+  --color-canvas: #08111f;
+  --color-surface: #101c2e;
+  --color-surface-raised: #16243a;
+  --color-surface-sunken: #0c1728;
+  --color-border: #29405e;
+  --color-text: #f5f8fc;
+  --color-text-muted: #9db0c9;
+  --color-primary: #20d6a6;
+  --color-primary-hover: #5ae5bf;
+  --color-primary-ink: #06241f;
+  --color-danger: #ff6b7a;
+  --color-success: #20d6a6;
+  --color-warning: #ffc65a;
+  --color-focus: #8eeed4;
+
+  /* Type */
+  --font-display: "Trebuchet MS", "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  --font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  /* Layout */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --shadow-card: 0 12px 32px rgb(0 0 0 / 0.22);
+  --shadow-float: 0 20px 48px rgb(0 0 0 / 0.34);
+}
+
+html {
+  font-family: var(--font-body);
+  background: var(--color-canvas);
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 12% -10%, rgb(32 214 166 / 0.12), transparent 27rem),
+    var(--color-canvas);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.brand-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.035em;
+}
+
+.brand-mark {
+  background: linear-gradient(135deg, var(--color-primary), #50b9ff);
+  box-shadow: 0 10px 24px rgb(32 214 166 / 0.24);
+}
+
+.ds-card {
+  background: rgb(16 28 46 / 0.9);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.ds-input {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+}
+
+.ds-input::placeholder { color: var(--color-text-muted); }
+.ds-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgb(32 214 166 / 0.18); outline: 0; }
+
+.ds-button-primary {
+  background: linear-gradient(90deg, var(--color-primary), #50b9ff);
+  border-radius: var(--radius-lg);
+  color: var(--color-primary-ink);
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgb(32 214 166 / 0.2);
+}
+
+.ds-button-primary:hover { filter: brightness(1.07); }
