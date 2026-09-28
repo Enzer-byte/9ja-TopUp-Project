@@ -1,5 +1,5 @@
 import React from 'react';
-import { Gamepad2, Search, MessageSquare, LayoutDashboard, ShieldCheck } from 'lucide-react';
+import { Gamepad2, Search, MessageSquare } from 'lucide-react';
 import { SystemSettings } from '../types';
 
 interface HeaderProps {
@@ -25,35 +25,30 @@ export const Header: React.FC<HeaderProps> = ({
     'Hello, I need assistance with my Nigerian Gaming Top-Up order.'
   )}`;
 
-  const isStorefrontActive = currentPath === '/dashboard' || currentPath.startsWith('/dashboard/games');
   const isTrackActive = currentPath.startsWith('/dashboard/track');
 
   return (
     <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 text-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Brand Logo & Tag */}
           <div 
             className="flex items-center space-x-2.5 cursor-pointer"
             onClick={() => onNavigate('/dashboard')}
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-slate-950 font-black">
-              <Gamepad2 className="w-6 h-6 text-slate-950" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-slate-950 font-black">
+              <Gamepad2 className="w-5 h-5 text-slate-950" />
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-emerald-300">
+                <span className="font-extrabold text-base sm:text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-emerald-300">
                   NG TopUp
                 </span>
                 {isAdminRoute ? (
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
                     ADMIN PORTAL
                   </span>
-                ) : (
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    🇳🇬 NGN
-                  </span>
-                )}
+                ) : null}
               </div>
               <p className="text-[11px] text-slate-400 font-medium leading-none">
                 {isAdminRoute ? 'Secure Operations & Metrics' : 'Instant Gaming Top-Up'}
@@ -65,21 +60,9 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center space-x-1 sm:space-x-2">
             {!isAdminRoute ? (
               <>
-                {/* Visitor Only Controls: Shop & Track Order */}
-                <button
-                  onClick={() => onNavigate('/dashboard')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
-                    isStorefrontActive
-                      ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800'
-                  }`}
-                >
-                  <span>Shop</span>
-                </button>
-
                 <button
                   onClick={() => onNavigate('/dashboard/track')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
+                  className={`px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 ${
                     isTrackActive
                       ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
                       : 'text-slate-300 hover:text-white hover:bg-slate-800'

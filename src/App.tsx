@@ -85,13 +85,15 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 pt-5 sm:pt-6">
-        {/* Interactive URL Address Bar & Directory */}
-        <RouteAddressBar
-          parsedRoute={parsedRoute}
-          onNavigate={navigateTo}
-          isAdminAuthenticated={isAdminAuthenticated}
-        />
+      <main className={`flex-1 w-full mx-auto px-4 sm:px-6 ${isAdminRoute ? 'max-w-4xl pt-5 sm:pt-6' : 'max-w-6xl pt-4 sm:pt-6'}`}>
+        {/* The route directory remains useful for operations and tracking, but stays out of the purchase journey. */}
+        {(isAdminRoute || parsedRoute.subRoute === 'track') && (
+          <RouteAddressBar
+            parsedRoute={parsedRoute}
+            onNavigate={navigateTo}
+            isAdminAuthenticated={isAdminAuthenticated}
+          />
+        )}
 
         {/* Dynamic Route View Resolution */}
         {!isAdminRoute ? (
@@ -180,8 +182,8 @@ export default function App() {
       {!isAdminRoute && <WhatsAppFloatingButton settings={settings} />}
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500 mt-12">
-        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <footer className="border-t border-slate-900 bg-slate-950/80 py-6 text-center text-xs text-slate-500 mt-8">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© {new Date().getFullYear()} Nigerian Gaming Top-Up Platform. Legitimate B2B publisher supply.</p>
           <div className="flex items-center space-x-3 text-[11px]">
             <span>Free Fire</span>
