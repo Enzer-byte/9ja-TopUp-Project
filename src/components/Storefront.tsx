@@ -124,7 +124,7 @@ export const Storefront: React.FC<StorefrontProps> = ({
   return (
     <div className="space-y-6 pb-12 text-slate-100">
       {/* Top Banner Notice */}
-      <div className="bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-900 border border-emerald-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm">
+      <div className="ds-card bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-900 border-emerald-500/20 rounded-2xl p-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
             <Zap className="w-5 h-5" />
@@ -225,7 +225,7 @@ export const Storefront: React.FC<StorefrontProps> = ({
                   setVerificationError(null);
                 }}
                 placeholder={currentGame.playerIdPlaceholder}
-                className="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition"
+                className="ds-input w-full px-4 py-3 text-sm font-mono transition"
               />
             </div>
             <button
@@ -346,7 +346,7 @@ export const Storefront: React.FC<StorefrontProps> = ({
               value={customerEmail}
               onChange={(e) => setCustomerEmail(e.target.value)}
               placeholder="e.g. gamer@gmail.com"
-              className="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              className="ds-input w-full px-4 py-2.5 text-sm"
             />
             <span className="text-[10px] text-slate-400 mt-1 block">Order receipt and reference code will be emailed here.</span>
           </div>
@@ -360,7 +360,7 @@ export const Storefront: React.FC<StorefrontProps> = ({
               value={customerPhone}
               onChange={(e) => setCustomerPhone(e.target.value)}
               placeholder="e.g. 08012345678"
-              className="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              className="ds-input w-full px-4 py-2.5 text-sm"
             />
             <span className="text-[10px] text-slate-400 mt-1 block">For priority support via WhatsApp.</span>
           </div>
@@ -390,7 +390,7 @@ export const Storefront: React.FC<StorefrontProps> = ({
 
         <button
           type="submit"
-          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-base flex items-center justify-center space-x-2 shadow-xl shadow-emerald-500/20 transition cursor-pointer"
+          className="ds-button-primary w-full py-3.5 text-base flex items-center justify-center space-x-2 transition cursor-pointer"
         >
           <Lock className="w-4 h-4" />
           <span>Pay with Paystack / Flutterwave</span>

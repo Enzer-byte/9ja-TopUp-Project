@@ -1,5 +1,5 @@
 import React from 'react';
-import { Gamepad2, Search, MessageSquare, LayoutDashboard, ShieldCheck } from 'lucide-react';
+import { Zap, Search, MessageSquare } from 'lucide-react';
 import { SystemSettings } from '../types';
 
 interface HeaderProps {
@@ -37,13 +37,13 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center space-x-2.5 cursor-pointer"
             onClick={() => onNavigate('/dashboard')}
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-slate-950 font-black">
-              <Gamepad2 className="w-6 h-6 text-slate-950" />
+            <div className="brand-mark w-10 h-10 rounded-xl flex items-center justify-center text-slate-950 font-black">
+              <Zap className="w-6 h-6" fill="currentColor" />
             </div>
             <div>
               <div className="flex items-center space-x-1.5">
-                <span className="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-emerald-300">
-                  NG TopUp
+                <span className="brand-display font-extrabold text-lg bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-emerald-300">
+                  RelayTop
                 </span>
                 {isAdminRoute ? (
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
@@ -56,7 +56,7 @@ export const Header: React.FC<HeaderProps> = ({
                 )}
               </div>
               <p className="text-[11px] text-slate-400 font-medium leading-none">
-                {isAdminRoute ? 'Secure Operations & Metrics' : 'Instant Gaming Top-Up'}
+                {isAdminRoute ? 'Secure Operations & Metrics' : 'Gaming credit, relayed fast'}
               </p>
             </div>
           </div>
