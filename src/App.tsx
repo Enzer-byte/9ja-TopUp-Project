@@ -7,7 +7,7 @@ import { AdminAuthGate } from './components/AdminAuthGate';
 import { WhatsAppFloatingButton } from './components/WhatsAppFloatingButton';
 import { RouteAddressBar } from './components/RouteAddressBar';
 import { ProductPackage, SystemSettings, Order, GameId } from './types';
-import { storage } from './services/storage';
+import { api } from './services/api';
 import { parsePath, ParsedRoute } from './routes';
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
   });
 
   const [packages, setPackages] = useState<ProductPackage[]>([]);
-  const [settings, setSettings] = useState<SystemSettings>(storage.getSettings());
+  const [settings, setSettings] = useState<SystemSettings>({ activeSupplier: 'mock', supplierSimulateFailure: false, supplierDelayMs: 0, whatsappSupportNumber: '+2348012345678', preferredGateway: 'paystack' });
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
     try {
@@ -33,8 +33,7 @@ export default function App() {
   const parsedRoute: ParsedRoute = parsePath(currentPath);
 
   useEffect(() => {
-    setPackages(storage.getPackages());
-    setSettings(storage.getSettings());
+    api.catalog().then(({ packages: list }) => setPackages(list)).catch(console.error);
 
     // Normalize URL if root
     if (window.location.pathname === '/' || window.location.pathname === '') {

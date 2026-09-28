@@ -14,7 +14,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { Order, SystemSettings } from '../types';
-import { storage } from '../services/storage';
+import { api } from '../services/api';
 
 interface OrderStatusViewProps {
   activeOrder: Order | null;
@@ -38,18 +38,14 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    setRecentOrders(storage.getOrders().slice(0, 5));
+    // Recent-order history is intentionally not exposed by the public API.
   }, []);
 
   // When initialOrderRef changes or activeOrder changes
   useEffect(() => {
     if (initialOrderRef) {
       setSearchQuery(initialOrderRef);
-      const found = storage.getOrderByRef(initialOrderRef);
-      if (found) {
-        setCurrentOrder(found);
-        onSelectOrder(found);
-      }
+      api.order(initialOrderRef).then(({ order }) => { setCurrentOrder(order); onSelectOrder(order); }).catch(() => setCurrentOrder(null));
     } else if (activeOrder) {
       setCurrentOrder(activeOrder);
       setSearchQuery(activeOrder.orderRef);
@@ -63,10 +59,7 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({
     }
 
     const interval = setInterval(() => {
-      const refreshed = storage.getOrderById(currentOrder.id);
-      if (refreshed) {
-        setCurrentOrder({ ...refreshed });
-      }
+      api.order(currentOrder.orderRef).then(({ order }) => setCurrentOrder(order)).catch(console.error);
     }, 2000);
 
     return () => clearInterval(interval);
@@ -77,22 +70,7 @@ export const OrderStatusView: React.FC<OrderStatusViewProps> = ({
     if (!searchQuery.trim()) return;
 
     setIsRefreshing(true);
-    setTimeout(() => {
-      const all = storage.getOrders();
-      const q = searchQuery.trim().toLowerCase();
-      const found = all.find(
-        (o) => o.orderRef.toLowerCase() === q || o.customerEmail.toLowerCase() === q || o.playerId.toLowerCase() === q
-      );
-
-      if (found) {
-        setCurrentOrder(found);
-        onSelectOrder(found);
-        onOrderRefChange?.(found.orderRef);
-      } else {
-        alert(`No order found matching "${searchQuery}". Check the reference code.`);
-      }
-      setIsRefreshing(false);
-    }, 400);
+    api.order(searchQuery.trim()).then(({ order: found }) => { setCurrentOrder(found); onSelectOrder(found); onOrderRefChange?.(found.orderRef); }).catch(() => alert(`No order found matching "${searchQuery}". Check the reference code.`)).finally(() => setIsRefreshing(false));
   };
 
   const copyRef = () => {

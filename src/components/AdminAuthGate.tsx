@@ -6,8 +6,6 @@ interface AdminAuthGateProps {
   onExitToStorefront: () => void;
 }
 
-const CORRECT_PIN = 'admin2026';
-
 export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({
   onAuthenticated,
   onExitToStorefront,
@@ -22,11 +20,12 @@ export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({
     setIsVerifying(true);
 
     setTimeout(() => {
-      if (pin.trim() === CORRECT_PIN) {
+      if (pin.trim().length >= 24) {
+        sessionStorage.setItem('ngt_admin_api_token', pin.trim());
         localStorage.setItem('ngt_admin_session', 'authenticated');
         onAuthenticated();
       } else {
-        setError('Incorrect Admin PIN. Access denied.');
+        setError('Enter the API token issued to your admin account.');
         setPin('');
       }
       setIsVerifying(false);
@@ -50,7 +49,7 @@ export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({
           <div>
             <label className="text-xs font-semibold text-slate-300 block mb-1.5 flex items-center space-x-1.5">
               <KeyRound className="w-3.5 h-3.5 text-amber-400" />
-              <span>Enter 9-Character Security PIN</span>
+              <span>Enter Admin API Token</span>
             </label>
             <input
               type="password"
@@ -60,7 +59,7 @@ export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({
                 setPin(e.target.value);
                 setError(null);
               }}
-              placeholder="•••••••••"
+              placeholder="Token from your administrator"
               className="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-center text-lg tracking-widest text-white font-mono placeholder-slate-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition"
             />
           </div>
