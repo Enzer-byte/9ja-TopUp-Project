@@ -17,8 +17,7 @@ import {
   History
 } from 'lucide-react';
 import { Order, ProductPackage, TransactionLog, SystemSettings, SupplierType } from '../types';
-import { storage } from '../services/storage';
-import { OrderService } from '../services/orderService';
+import { api } from '../services/api';
 import { AdminSkeleton } from './AdminSkeleton';
 
 interface AdminDashboardProps {
@@ -96,21 +95,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  const refreshData = () => {
-    setOrders(storage.getOrders());
-    setTransactions(storage.getTransactions());
+  const refreshData = async () => {
+    const [orderData, auditData] = await Promise.all([api.admin.orders(), api.admin.audit()]);
+    setOrders(orderData.orders);
+    setTransactions(auditData.logs);
   };
 
   const handleManualRefresh = () => {
     setIsManualRefreshing(true);
-    refreshData();
+    void refreshData();
     setTimeout(() => {
       setIsManualRefreshing(false);
     }, 450);
   };
 
   useEffect(() => {
-    refreshData();
+    void refreshData();
   }, []);
 
   // Compute Metrics
@@ -128,12 +128,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const handleManualRetry = async (orderId: string) => {
     setRetryingOrderId(orderId);
     try {
-      const res = await OrderService.adminRetryOrder(orderId);
-      if (res.order) {
-        setSelectedOrder(res.order);
-      }
-      refreshData();
-      alert(res.message);
+      const res = await api.admin.retry(orderId);
+      setSelectedOrder(res.order);
+      await refreshData();
+      alert('Retry queued.');
     } catch {
       alert('Retry encountered an error');
     } finally {
@@ -142,22 +140,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   // Toggle package availability
-  const handleTogglePackage = (pkgId: string, currentStatus: boolean) => {
-    const updated = storage.updatePackage(pkgId, { isActive: !currentStatus });
-    onPackagesUpdated(updated);
+  const handleTogglePackage = async (pkgId: string, currentStatus: boolean) => {
+    await api.admin.updatePackage(pkgId, { isActive: !currentStatus });
+    onPackagesUpdated((await api.admin.catalog()).packages);
   };
 
   // Update package price
-  const handleUpdatePrice = (pkgId: string, newSalePrice: number) => {
+  const handleUpdatePrice = async (pkgId: string, newSalePrice: number) => {
     if (isNaN(newSalePrice) || newSalePrice <= 0) return;
-    const updated = storage.updatePackage(pkgId, { salePriceNgn: newSalePrice });
-    onPackagesUpdated(updated);
+    await api.admin.updatePackage(pkgId, { salePriceNgn: newSalePrice });
+    onPackagesUpdated((await api.admin.catalog()).packages);
   };
 
   // Change active supplier
-  const handleSupplierChange = (supplier: SupplierType) => {
-    const updated = storage.saveSettings({ activeSupplier: supplier });
-    onSettingsUpdated(updated);
+  const handleSupplierChange = async (supplier: SupplierType) => {
+    await api.admin.updateSupplier(supplier, true);
+    onSettingsUpdated({ ...settings, activeSupplier: supplier });
   };
 
   const filteredOrders = orders.filter((o) => {
@@ -658,10 +656,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               type="button"
               onClick={() => {
                 if (confirm('Reset all demo orders and catalog prices to factory default?')) {
-                  storage.resetDemoData();
-                  refreshData();
-                  onPackagesUpdated(storage.getPackages());
-                  alert('Demo database reset.');
+                  alert('Demo resets are intentionally disabled: production data is managed through migrations and admin APIs.');
                 }
               }}
               className="text-xs text-slate-500 hover:text-red-400 underline font-medium transition"

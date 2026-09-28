@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, ShieldCheck, CreditCard, Building2, PhoneCall, CheckCircle2, AlertCircle, ArrowRight, RefreshCw, Zap } from 'lucide-react';
 import { Order, PaymentGateway } from '../types';
-import { OrderService } from '../services/orderService';
+import { api } from '../services/api';
 
 interface CheckoutModalProps {
   order: Order | null;
@@ -34,20 +34,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       : `idemp_${order.orderRef}_${Date.now()}`;
 
     try {
-      const result = await OrderService.handlePaymentWebhook({
-        orderId: order.id,
-        gatewayRef,
-        gateway: selectedGateway,
-        idempotencyKey,
-      });
+      const result = await api.initializePayment(order.orderRef, selectedGateway);
 
       if (isDuplicateTest) {
         setDuplicateWebhookTested(true);
       }
 
-      if (result.order) {
-        onPaymentComplete(result.order);
-      }
+      onPaymentComplete(result.order);
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : 'Payment error occurred');
     } finally {

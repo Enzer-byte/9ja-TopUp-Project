@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { GameId, ProductPackage, Order } from '../types';
 import { GAMES } from '../data/initialCatalog';
-import { OrderService } from '../services/orderService';
+import { api } from '../services/api';
 import { PlayerIdHelpModal } from './PlayerIdHelpModal';
 import { CheckoutModal } from './CheckoutModal';
 
@@ -71,7 +71,7 @@ export const Storefront: React.FC<StorefrontProps> = ({
     setVerifiedNickname(null);
 
     try {
-      const res = await OrderService.validatePlayerId(selectedGameId, playerId);
+      const res = await api.validatePlayer(selectedGameId, playerId);
       if (res.valid) {
         setVerifiedNickname(res.playerName || 'Verified Account');
       } else {
@@ -86,7 +86,7 @@ export const Storefront: React.FC<StorefrontProps> = ({
 
   const selectedPkg = activePackages.find((p) => p.id === selectedPackageId);
 
-  const handleProceedToCheckout = (e: React.FormEvent) => {
+  const handleProceedToCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedPkg) {
@@ -102,9 +102,9 @@ export const Storefront: React.FC<StorefrontProps> = ({
       return;
     }
 
-    const order = OrderService.createOrder({
+    const { order } = await api.createOrder({
       gameId: selectedGameId,
-      pkg: selectedPkg,
+      packageId: selectedPkg.id,
       playerId,
       playerNickname: verifiedNickname || undefined,
       customerEmail,
