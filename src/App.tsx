@@ -85,13 +85,15 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 pt-5 sm:pt-6">
-        {/* Interactive URL Address Bar & Directory */}
-        <RouteAddressBar
-          parsedRoute={parsedRoute}
-          onNavigate={navigateTo}
-          isAdminAuthenticated={isAdminAuthenticated}
-        />
+      <main className={`flex-1 w-full mx-auto px-4 sm:px-6 ${isAdminRoute ? 'max-w-4xl pt-5 sm:pt-6' : 'max-w-6xl pt-4 sm:pt-6'}`}>
+        {/* The route directory remains useful for operations and tracking, but stays out of the purchase journey. */}
+        {(isAdminRoute || parsedRoute.subRoute === 'track') && (
+          <RouteAddressBar
+            parsedRoute={parsedRoute}
+            onNavigate={navigateTo}
+            isAdminAuthenticated={isAdminAuthenticated}
+          />
+        )}
 
         {/* Dynamic Route View Resolution */}
         {!isAdminRoute ? (
